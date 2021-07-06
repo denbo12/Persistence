@@ -8,7 +8,8 @@ import com.denbofa.persistence.databinding.ShoppingItemBinding
 class ShoppingAdapter(val shoppingItems: List<ShoppingModel>): RecyclerView.Adapter<ShoppingAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ShoppingItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(shoppingItem: List<ShoppingModel>){
+
+        fun bind(shoppingItem: ShoppingModel){
             binding.category.text = shoppingItem.category
             binding.description.text = shoppingItem.description
         }
