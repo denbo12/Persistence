@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         myShoppingList = mutableListOf()
 
-        val myShoppingAdapter = ShoppingAdapter(myShoppingList){
+        myShoppingAdapter = ShoppingAdapter(myShoppingList){
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("CATEGORY_KEY", it.category)
         }
@@ -28,8 +28,12 @@ class MainActivity : AppCompatActivity() {
 
         val shoppingDAO = db.ShoppingDAO()
 
-        myShoppingList = shoppingDAO.getAllShoppingItems().toMutableList()
-        myShoppingAdapter.notifyDataSetChanged()
+        shoppingDAO.getAllShoppingItems().observe(this, {
+            myShoppingAdapter = ShoppingAdapter(myShoppingList){ }
+            binding.recyclerView.adapter = myShoppingAdapter
+            myShoppingAdapter.notifyDataSetChanged()
+        })
+
 
         binding.button.setOnClickListener {
             val category: String = binding.editText.text.toString()
