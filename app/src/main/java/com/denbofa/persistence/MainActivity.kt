@@ -1,7 +1,9 @@
 package com.denbofa.persistence
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.room.Room
 import com.denbofa.persistence.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -16,14 +18,26 @@ class MainActivity : AppCompatActivity() {
 
         myShoppingList = mutableListOf()
 
-        val myShoppingAdapter = ShoppingAdapter(myShoppingList)
+        val myShoppingAdapter = ShoppingAdapter(myShoppingList){
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("CATEGORY_KEY", it.category)
+        }
         binding.recyclerView.adapter = myShoppingAdapter
+
+        val db = Room.databaseBuilder(applicationContext, ShoppingDatabase::class.java, "shopping-database").allowMainThreadQueries().build()
+
+        val shoppingDAO = db.ShoppingDAO()
+
+        myShoppingList = shoppingDAO.getAllShoppingItems().toMutableList()
+        myShoppingAdapter.notifyDataSetChanged()
 
         binding.button.setOnClickListener {
             val category: String = binding.editText.text.toString()
             val description: String = binding.editText2.text.toString()
 
             val shoppingItem = ShoppingModel(category,description)
+
+            shoppingDAO.addShoppingItem(shoppingItem)
 
             myShoppingList.add(shoppingItem)
             myShoppingAdapter.notifyDataSetChanged()
